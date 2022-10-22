@@ -6,4 +6,4 @@ Team members:
 -Rodrigo Schardong - https://github.com/rodrigoschardong 
 -Henrique Andrade - https://github.com/Rick-Andrade
 -Gabriel Camargo - https://github.com/GabrielPCamargo
-    
+-Gabriel Vieira  - https://github.com/Garsaa
