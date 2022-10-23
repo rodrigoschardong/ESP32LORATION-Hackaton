@@ -21,7 +21,7 @@ void initADC() {
 */
 int readADC(int samples) {
     uint32_t voltage = 0;
-    for (int i = 0; i < samples; i++)
+    for (uint8_t i = 0; i < samples; i++)
     {
         voltage += esp_adc_cal_raw_to_voltage(adc1_get_raw(ADC1_CHANNEL_6), &adc1_chars);
     }
