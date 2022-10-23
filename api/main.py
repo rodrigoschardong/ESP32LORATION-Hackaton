@@ -32,6 +32,9 @@ url = str(GetIp())
 
 requestBuffer = []
 
+def ListToDF(buffer):
+    return pd.DataFrame (buffer, columns = ['Json Packs'])
+
 @app.route('/dogfeeder', methods = ["POST"])
 def pHandler():
     """
@@ -40,6 +43,7 @@ def pHandler():
     
     global requestBuffer
     requesBuffer = p.Handler(request.data, requestBuffer)
+    df_buffer = ListToDF(requestBuffer)
     return "True"
 
 @app.route('/dogfeeder', methods = ["GET"])
