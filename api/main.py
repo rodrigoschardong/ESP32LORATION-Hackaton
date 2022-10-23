@@ -8,6 +8,7 @@ from flask_cors import CORS
 import socket
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 
 import post as p
 import get as g
@@ -24,6 +25,7 @@ def GetIp():
     print("Local IP: " + IP)
     return IP
     
+
 app = Flask(__name__)
 CORS(app)
 url = str(GetIp())
