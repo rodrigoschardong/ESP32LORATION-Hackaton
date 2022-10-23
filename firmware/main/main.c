@@ -13,38 +13,25 @@
 #include "esp_spi_flash.h"
 #include "esp_err.h"
 #include "driver/gpio.h"
+#include "stepperMotor.h"
 
-
-esp_err_t Funcao_Demonstracao(bool *status_pin){
-    #define GPIO_PIN GPIO_NUM_2
-    esp_err_t error = gpio_set_level(GPIO_PIN, *status_pin);
-    *status_pin = !(*status_pin);
-    return error;
-}
+#define PIN1 27
+#define PIN2 26
+#define PIN3 25
+#define PIN4 33
 
 void app_main(void)
-{
-    printf("Hello world!\n");
+{   
+    // configStepperMotor: setup the pins as output and save them for future use
+    configStepperMotor(PIN1, PIN2, PIN3, PIN4);
 
-    /* Print chip information */
-    esp_chip_info_t chip_info;
-    esp_chip_info(&chip_info);
-    printf("This is ESP32 chip with %d CPU cores, WiFi%s%s, ",
-            chip_info.cores,
-            (chip_info.features & CHIP_FEATURE_BT) ? "/BT" : "",
-            (chip_info.features & CHIP_FEATURE_BLE) ? "/BLE" : "");
+    // stepCounterclockwise: steps motor for the given number of steps in counterclockwise direction
+    stepCounterclockwise(500);
 
-    printf("silicon revision %d, ", chip_info.revision);
+    // delay to stop for a second.
+    vTaskDelay(1000 / portTICK_PERIOD_MS);
 
-    printf("%dMB %s flash\n", spi_flash_get_chip_size() / (1024 * 1024),
-            (chip_info.features & CHIP_FEATURE_EMB_FLASH) ? "embedded" : "external");
-
-    for (int i = 10; i >= 0; i--) {
-        printf("Restarting in %d seconds...\n", i);
-        vTaskDelay(1000 / portTICK_PERIOD_MS);
-    }
-    printf("Restarting now.\n");
-    fflush(stdout);
-    esp_restart();
+    // stepClockWise: steps motor for the given number of steps in clockwise direction
+    stepClockwise(500);
 }
 
