@@ -9,10 +9,12 @@ import socket
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import openpyxl
 
 import post as p
 import get as g
 
+EXCELPATH = "DataBank.xlsx"
 def GetIp():
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     try:
@@ -25,12 +27,32 @@ def GetIp():
     print("Local IP: " + IP)
     return IP
     
+def ListToDF(buffer):
+    return pd.DataFrame (buffer, columns = ['Json Packs'])
+
+def Store(buffer):
+    df = ListToDF(buffer)
+    df.to_excel(r'DataBank.xlsx', index = False)
+
+def Read():
+    try:
+        df = pd.read_excel(EXCELPATH)
+        buffer = df.values.tolist()
+        out = []
+        for b in buffer:
+            out.append(b[0])
+        print(out)
+        return out
+    except:
+        return []
 
 app = Flask(__name__)
 CORS(app)
 url = str(GetIp())
 
-requestBuffer = []
+#requestBuffer = []
+requestBuffer = Read()
+
 
 def ListToDF(buffer):
     return pd.DataFrame (buffer, columns = ['Json Packs'])
@@ -43,7 +65,8 @@ def pHandler():
     
     global requestBuffer
     requesBuffer = p.Handler(request.data, requestBuffer)
-    df_buffer = ListToDF(requestBuffer)
+    
+    Store(requestBuffer)
     return "True"
 
 @app.route('/dogfeeder', methods = ["GET"])
