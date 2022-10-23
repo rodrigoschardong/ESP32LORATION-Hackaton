@@ -28,16 +28,25 @@ app = Flask(__name__)
 CORS(app)
 url = str(GetIp())
 
-@app.route('/DogFeeder', methods = ["POST", "GET"])
-def agvIP():
-    if(request.method == 'POST'):
-        clientIP = (request.data)
-        print('Receiving client Request Data: ' + request.data)
-        return p.Handler(request.data)
-    else:
-        print('Receiving client Request Data: ' + request.data)
-        return g.Handler(request.data)
+requestBuffer = []
 
+@app.route('/dogfeeder', methods = ["POST"])
+def pHandler():
+    """
+        print("Receiving client Post Request Data: " + str(request.data))
+    """
+    
+    global requestBuffer
+    requesBuffer = p.Handler(request.data, requestBuffer)
+    return "True"
+
+@app.route('/dogfeeder', methods = ["GET"])
+def gHandler():
+    """
+        print('Receiving client Get Request Data: ' + str(request.data))
+    """
+    
+    return g.Handler(request.data, requestBuffer)
 
 app.run(host = url, port = 8080)
 
