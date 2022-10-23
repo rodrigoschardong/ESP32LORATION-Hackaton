@@ -1,50 +1,76 @@
-/* Hello World Example
-
-   This example code is in the Public Domain (or CC0 licensed, at your option.)
-
-   Unless required by applicable law or agreed to in writing, this
-   software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-   CONDITIONS OF ANY KIND, either express or implied.
-*/
+#include <string.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
+#include "freertos/event_groups.h"
 #include "esp_system.h"
+#include "esp_wifi.h"
+#include "esp_event.h"
+#include "esp_log.h"
+#include "nvs_flash.h"
+#include "wifi.h"
+
+#include "lwip/err.h"
+#include "lwip/sys.h"
+
 #include "esp_spi_flash.h"
 #include "esp_err.h"
 #include "driver/gpio.h"
+#include "stepperMotor.h"
 
+#include "esp_log.h"
 
-esp_err_t Funcao_Demonstracao(bool *status_pin){
-    #define GPIO_PIN GPIO_NUM_2
-    esp_err_t error = gpio_set_level(GPIO_PIN, *status_pin);
-    *status_pin = !(*status_pin);
-    return error;
-}
+#include "adc.h"
+#include "timer.h"
+
+#define PIN1 27
+#define PIN2 26
+#define PIN3 25
+#define PIN4 33
+#define SCALE 34
+
+static const char *TAG = "ADC";
+static bool shouldLog = false;
+
+#define EXAMPLE_ESP_WIFI_SSID      CONFIG_ESP_WIFI_SSID
+#define EXAMPLE_ESP_WIFI_PASS      CONFIG_ESP_WIFI_PASSWORD
+#define EXAMPLE_ESP_MAXIMUM_RETRY  CONFIG_ESP_MAXIMUM_RETRY
+
+#define WIFI_CONNECTED_BIT BIT0
+#define WIFI_FAIL_BIT      BIT1
+
+const uint32_t timerValueSeconds = 1800;
+
 
 void app_main(void)
-{
-    printf("Hello world!\n");
+{   
+    wifi_start();
+    double weight;
+    // configStepperMotor: setup the pins as output and save them for future use
+    configStepperMotor(PIN1, PIN2, PIN3, PIN4);
+    initADC();
+    
+    uint8_t timerCounter = 0;
+    //Init Timer
+    tg0_timer0_init(timerValueSeconds, &timerCounter);
+    // stepCounterclockwise: steps motor for the given number of steps in counterclockwise direction
+    stepCounterclockwise(500);
 
-    /* Print chip information */
-    esp_chip_info_t chip_info;
-    esp_chip_info(&chip_info);
-    printf("This is ESP32 chip with %d CPU cores, WiFi%s%s, ",
-            chip_info.cores,
-            (chip_info.features & CHIP_FEATURE_BT) ? "/BT" : "",
-            (chip_info.features & CHIP_FEATURE_BLE) ? "/BLE" : "");
+    // delay to stop for a second.
+    vTaskDelay(1000 / portTICK_PERIOD_MS);
 
-    printf("silicon revision %d, ", chip_info.revision);
+    // stepClockWise: steps motor for the given number of steps in clockwise direction
+    stepClockwise(500);
 
-    printf("%dMB %s flash\n", spi_flash_get_chip_size() / (1024 * 1024),
-            (chip_info.features & CHIP_FEATURE_EMB_FLASH) ? "embedded" : "external");
+    while (1) 
+    {
+        weight = readWeight(128);
+        if (shouldLog) {
+            ESP_LOGI(TAG, "ADC1_CHANNEL_6: %f kg", weight);
+        }
 
-    for (int i = 10; i >= 0; i--) {
-        printf("Restarting in %d seconds...\n", i);
-        vTaskDelay(1000 / portTICK_PERIOD_MS);
+        vTaskDelay(pdMS_TO_TICKS(100));
     }
-    printf("Restarting now.\n");
-    fflush(stdout);
-    esp_restart();
 }
 
