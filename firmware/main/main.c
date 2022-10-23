@@ -19,11 +19,10 @@
 #include "driver/gpio.h"
 #include "stepperMotor.h"
 
-#include "esp_adc_cal.h"
-#include "driver/adc.h"
 #include "esp_log.h"
 
 #include "adc.h"
+#include "timer.h"
 
 #define PIN1 27
 #define PIN2 26
@@ -41,7 +40,8 @@ static bool shouldLog = false;
 #define WIFI_CONNECTED_BIT BIT0
 #define WIFI_FAIL_BIT      BIT1
 
-static const char *TAG = "wifi station";
+const uint32_t timerValueSeconds = 1800;
+
 
 void app_main(void)
 {   
@@ -51,6 +51,9 @@ void app_main(void)
     configStepperMotor(PIN1, PIN2, PIN3, PIN4);
     initADC();
     
+    uint8_t timerCounter = 0;
+    //Init Timer
+    tg0_timer0_init(timerValueSeconds, &timerCounter);
     // stepCounterclockwise: steps motor for the given number of steps in counterclockwise direction
     stepCounterclockwise(500);
 
