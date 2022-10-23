@@ -45,7 +45,6 @@ def Read():
         return out
     except:
         return []
-    
 
 app = Flask(__name__)
 CORS(app)
@@ -54,6 +53,9 @@ url = str(GetIp())
 #requestBuffer = []
 requestBuffer = Read()
 
+
+def ListToDF(buffer):
+    return pd.DataFrame (buffer, columns = ['Json Packs'])
 
 @app.route('/dogfeeder', methods = ["POST"])
 def pHandler():
