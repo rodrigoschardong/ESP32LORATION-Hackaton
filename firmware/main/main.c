@@ -14,11 +14,14 @@
 #include "esp_err.h"
 #include "driver/gpio.h"
 #include "stepperMotor.h"
+#include "ultrasonic.h"
 
 #define PIN1 27
 #define PIN2 26
 #define PIN3 25
 #define PIN4 33
+
+uint8_t flag;
 
 void app_main(void)
 {   
@@ -33,5 +36,9 @@ void app_main(void)
 
     // stepClockWise: steps motor for the given number of steps in clockwise direction
     stepClockwise(500);
+
+    ultrasonicHandler(&flag);
+
+    printf("%d", flag);
 }
 
