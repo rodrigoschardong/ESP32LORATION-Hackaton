@@ -1,19 +1,19 @@
-// function postData(host){
-//     const Http = new XMLHttpRequest();
-//     const url=`${host}/dogfeeder`;
-//     Http.open("POST", url);
-//     Http.send(JSON.stringify({teste: 'teste'}));
+function postData(host){
+    const Http = new XMLHttpRequest();
+    const url=`${host}/dogfeeder`;
+    Http.open("POST", url);
+    Http.send(JSON.stringify({teste: 'teste'}));
 
-//     let executedFunction = false;
-//     Http.onreadystatechange = (e) => {
-//         if(!executedFunction && Http.responseText){
-//             executedFunction = true
-//             console.log(Http.responseText)
-//         }
-//     }
-// }
+    let executedFunction = false;
+    Http.onreadystatechange = (e) => {
+        if(!executedFunction && Http.responseText){
+            executedFunction = true
+            console.log(Http.responseText)
+        }
+    }
+}  
 
-// postData('http://192.168.0.14:8080');
+postData('http://192.168.0.14:8080');
 
 function getData(host){
     const Http = new XMLHttpRequest();
