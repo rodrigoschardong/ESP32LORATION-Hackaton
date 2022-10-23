@@ -8,6 +8,7 @@ from flask_cors import CORS
 import socket
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 
 import post as p
 import get as g
@@ -24,11 +25,15 @@ def GetIp():
     print("Local IP: " + IP)
     return IP
     
+
 app = Flask(__name__)
 CORS(app)
 url = str(GetIp())
 
 requestBuffer = []
+
+def ListToDF(buffer):
+    return pd.DataFrame (buffer, columns = ['Json Packs'])
 
 @app.route('/dogfeeder', methods = ["POST"])
 def pHandler():
@@ -38,6 +43,7 @@ def pHandler():
     
     global requestBuffer
     requesBuffer = p.Handler(request.data, requestBuffer)
+    df_buffer = ListToDF(requestBuffer)
     return "True"
 
 @app.route('/dogfeeder', methods = ["GET"])
