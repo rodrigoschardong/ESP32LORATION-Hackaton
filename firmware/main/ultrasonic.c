@@ -71,6 +71,7 @@ static portMUX_TYPE mux = portMUX_INITIALIZER_UNLOCKED;
 #define CHECK(x) do { esp_err_t __; if ((__ = x) != ESP_OK) return __; } while (0)
 #define RETURN_CRITICAL(RES) do { PORT_EXIT_CRITICAL; return RES; } while(0)
 
+
 esp_err_t ultrasonic_init(const ultrasonic_sensor_t *dev)
 {
     CHECK_ARG(dev);
@@ -158,13 +159,13 @@ esp_err_t ultrasonic_measure_mm(const ultrasonic_sensor_t *dev, uint32_t max_dis
 
 #define MAX_DISTANCE_CM 500 // 5m max
 
-#if defined(CONFIG_IDF_TARGET_ESP8266)
-#define TRIGGER_GPIO 4
-#define ECHO_GPIO 5
-#else
+//#if defined(CONFIG_IDF_TARGET_ESP8266)
+//#define TRIGGER_GPIO 4
+//#define ECHO_GPIO 5
+//#else
 #define TRIGGER_GPIO 18
 #define ECHO_GPIO 19
-#endif
+//#endif
 
 void ultrasonic_test(dogFeederData_t *pDogFeederData)
 {
