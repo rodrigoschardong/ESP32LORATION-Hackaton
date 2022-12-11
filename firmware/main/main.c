@@ -1,3 +1,5 @@
+<<<<<<< Updated upstream
+=======
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -57,6 +59,7 @@ void app_main(void)
 {   
     dogFeederData_t dogFeederData;
     wifi_start();
+    
     double weight;
     // configStepperMotor: setup the pins as output and save them for future use
     configStepperMotor(PIN1, PIN2, PIN3, PIN4);
@@ -65,11 +68,9 @@ void app_main(void)
 
     //initADC();
     
-    uint8_t timerCounter = 1;
+    uint8_t timerCounter = 0;
     //Init Timer
     tg0_timer0_init(timerValueSeconds, &timerCounter);
-
-    // stepCounterclockwise: steps motor for the given number of steps in counterclockwise direction
 
     while(1){
         if(timerCounter){
@@ -89,4 +90,3 @@ void app_main(void)
     
     // stepClockWise: steps motor for the given number of steps in clockwise direction
     stepClockwise(500);
-}
