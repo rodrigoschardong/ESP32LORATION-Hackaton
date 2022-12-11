@@ -1,0 +1,1 @@
+void tg0_timer0_init(uint32_t timeInSecs, uint8_t * timerCounter);
