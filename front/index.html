@@ -6,41 +6,42 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>DogFeeder</title>
     <link rel="stylesheet" href="./style.css" />
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.0.1/chart.min.js"></script>
+    <script>
+
+      var ctx = document.getElementsByClassName("grafico");
+
+      var chartgraf = new chart(ctx,{
+        type:'line', 
+
+
+
+      }); -->
+
     <script>
       function renderTable(data) {
-        const tabela = document.getElementById("tabela");
+        const ctx = document.getElementById("myChart");
 
-        const tableContent = [
-          "<table>",
-          "<thead>",
-          "<tr>",
-          "<th>data</th>",
-          "<th>peso total</th>",
-          "<th>mudança de peso</th>",
-          "<th>altura do reservatório</th>",
-          "</tr>",
-          "</thead>",
-          "<tbody>",
-          data
-            .flatMap((entry, index) => {
-              return [
-                "<tr>",
-                "<td>" + new Date(entry.date).toLocaleString() + "</td>",
-                "<td>" + entry.total_weight_mg + "</td>",
-                "<td>" +
-                  (entry.total_weight_mg -
-                    (data[index - 1]?.total_weight_mg ?? 0)) +
-                  "</td>",
-                "<td>" + entry.food_height_cm + "</td>",
-                "</tr>",
-              ];
-            })
-            .join(""),
-          "</tbody>",
-          "</table>",
-        ].join("");
-        console.log(tableContent);
-        tabela.innerHTML = tableContent;
+        new Chart(ctx, {
+          type: "line",
+          data: {
+            labels: data.map(({date}) => new Date(date).toLocaleString()),
+            datasets: [
+              {
+                label: "Ração do seu canino (%)",
+                data: data.map(({food_height_cm}) => food_height_cm),
+                borderWidth: 1,
+              },
+            ],
+          },
+          options: {
+            scales: {
+              y: {
+                beginAtZero: true,
+              },
+            },
+          },
+        });
       }
 
       function postData(host) {
@@ -51,7 +52,7 @@
           JSON.stringify({
             date: new Date().toISOString(),
             total_weight_mg: 1500,
-            food_height_cm: 22,
+            food_height_cm: 29,
           })
         );
         let executedFunction = false;
@@ -62,7 +63,7 @@
           }
         };
       }
-      //   postData('http://192.168.0.14:8080');
+      postData("http://192.168.0.9:8080");
 
       function getData(host) {
         const Http = new XMLHttpRequest();
@@ -79,20 +80,28 @@
           }
         };
       }
-      getData("http://192.168.0.14:8080");
+      getData("http://192.168.0.9:8080");
     </script>
   </head>
   <body>
+    
+
+   
+
     <header>
       <h1>Dog Feeder</h1>
     </header>
     <main>
       <div>We care about your pet when you aren't at home</div>
-      <div id="tabela"></div>
+      <div>
+        <canvas id="myChart"></canvas>
+      </div>
     </main>
+    
     <footer>
       Contibutors: Lucas Ennes, Rodrigo Schardong, Henrique Andrade, Matheus
-      Araújo, Gabriel Camargo, Gabriel Vieira
+      Araújo, Gabriel Camargo, Gabriel Vieira, Glauce Cassiano
     </footer>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   </body>
 </html>
