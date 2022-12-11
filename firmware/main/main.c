@@ -19,11 +19,13 @@
 
 #include "timer.h"
 
+//Step Motor Pins
 #define PIN1 27
 #define PIN2 26
 #define PIN3 25
 #define PIN4 33
 
+//WiFi
 #define EXAMPLE_ESP_WIFI_SSID      CONFIG_ESP_WIFI_SSID
 #define EXAMPLE_ESP_WIFI_PASS      CONFIG_ESP_WIFI_PASSWORD
 #define EXAMPLE_ESP_MAXIMUM_RETRY  CONFIG_ESP_MAXIMUM_RETRY
@@ -31,8 +33,10 @@
 #define WIFI_CONNECTED_BIT BIT0
 #define WIFI_FAIL_BIT      BIT1
 
-const uint32_t timerValueSeconds = 1800;
+const uint32_t timerValueSeconds = 25; //1800;
+const uint32_t steperOperationTimeSeconds = 15;
 
+static const char *TAG = "Main";
 
 void app_main(void)
 {   
@@ -40,16 +44,21 @@ void app_main(void)
     // configStepperMotor: setup the pins as output and save them for future use
     configStepperMotor(PIN1, PIN2, PIN3, PIN4);
 
-    uint8_t timerCounter = 0;
+    uint8_t timerCounter = 1;
     //Init Timer
     tg0_timer0_init(timerValueSeconds, &timerCounter);
+
     // stepCounterclockwise: steps motor for the given number of steps in counterclockwise direction
-    stepCounterclockwise(500);
 
-    // delay to stop for a second.
-    vTaskDelay(1000 / portTICK_PERIOD_MS);
-
-    // stepClockWise: steps motor for the given number of steps in clockwise direction
-    stepClockwise(500);
+    while(1){
+        if(timerCounter){
+            ESP_LOGI(TAG, "Food Time");
+            timerCounter = 0;
+            stepCounterclockwise(steperOperationTimeSeconds);
+            ESP_LOGI(TAG, "Enjoy :)");
+            //Trigger Ultrassonic
+        }
+        vTaskDelay(10 / portTICK_PERIOD_MS);
+    }
 }
 
