@@ -23,6 +23,7 @@
 
 #include "adc.h"
 #include "timer.h"
+#include "buzzerBitter.h"
 
 #define PIN1 27
 #define PIN2 26
@@ -62,6 +63,7 @@ void app_main(void)
 
     // stepClockWise: steps motor for the given number of steps in clockwise direction
     stepClockwise(500);
+    configBuzzerGeneral();
 
     while (1) 
     {
