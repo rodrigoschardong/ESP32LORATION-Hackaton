@@ -1,0 +1,37 @@
+body {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  min-height: 100vh;
+  background-color: #ccd089;
+  color: rgb(0, 0, 0);
+}
+header {
+  padding: 20px;
+  text-align: center;
+}
+main {
+  flex: 1;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+footer {
+  padding: 20px;
+  text-align: center;
+}
+
+
+table{
+    border-spacing: 0px;
+}
+td {
+    border: 1px solid white;
+    padding: 5px;
+}
+
+#myChart{
+  width: 100vw;
+  height: auto;
+}
