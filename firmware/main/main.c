@@ -45,6 +45,8 @@ const uint32_t timerValueSeconds = 1800;
 
 
 
+bool fplaysong = pdTRUE;
+
 void app_main(void)
 {   
     wifi_start();
@@ -54,7 +56,10 @@ void app_main(void)
     double weight;
     // configStepperMotor: setup the pins as output and save them for future use
     configStepperMotor(PIN1, PIN2, PIN3, PIN4);
-    initADC();
+    soundHandler(&fplaysong);
+    ultrasonicHandler(&dogFeederData);
+
+    //initADC();
     
     uint8_t timerCounter = 0;
     //Init Timer
@@ -65,19 +70,33 @@ void app_main(void)
     // delay to stop for a second.
     vTaskDelay(1000 / portTICK_PERIOD_MS);
 
+    while(1){
+        if(timerCounter){
+            ESP_LOGI(TAG, "Food Time");
+            timerCounter = 0;
+            configBuzzerGeneral();
+            stepCounterclockwise(steperOperationTimeSeconds);
+            ESP_LOGI(TAG, "Enjoy :)");
+            //Trigger Ultrassonic
+            fplaysong = 1;
+            dogFeederData.readUltrasonic = 1;
+            printf("percentage: %.2f%% \n", dogFeederData.percentageFull);
+            vTaskDelay(500 / portTICK_PERIOD_MS);
+        }
+        vTaskDelay(10 / portTICK_PERIOD_MS);
+    }
+    
     // stepClockWise: steps motor for the given number of steps in clockwise direction
     stepClockwise(500);
 
-    while (1) 
-    {
-        weight = readWeight(128);
-        if (shouldLog) {
-            ESP_LOGI(TAG, "ADC1_CHANNEL_6: %f kg", weight);
-        }
 
-        vTaskDelay(pdMS_TO_TICKS(100));
-    }
+    // while (1) 
+    // {
+    //     weight = readWeight(128);
+    //     if (shouldLog) {
+    //         ESP_LOGI(TAG, "ADC1_CHANNEL_6: %f kg", weight);
+    //     }
 
-        
-
+    //     vTaskDelay(pdMS_TO_TICKS(100));
+    // }
 }

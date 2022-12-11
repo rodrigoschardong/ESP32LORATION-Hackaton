@@ -71,6 +71,7 @@ static portMUX_TYPE mux = portMUX_INITIALIZER_UNLOCKED;
 #define CHECK(x) do { esp_err_t __; if ((__ = x) != ESP_OK) return __; } while (0)
 #define RETURN_CRITICAL(RES) do { PORT_EXIT_CRITICAL; return RES; } while(0)
 
+
 esp_err_t ultrasonic_init(const ultrasonic_sensor_t *dev)
 {
     CHECK_ARG(dev);
@@ -158,16 +159,20 @@ esp_err_t ultrasonic_measure_mm(const ultrasonic_sensor_t *dev, uint32_t max_dis
 
 #define MAX_DISTANCE_CM 500 // 5m max
 
-#if defined(CONFIG_IDF_TARGET_ESP8266)
-#define TRIGGER_GPIO 4
-#define ECHO_GPIO 5
-#else
+//#if defined(CONFIG_IDF_TARGET_ESP8266)
+//#define TRIGGER_GPIO 4
+//#define ECHO_GPIO 5
+//#else
 #define TRIGGER_GPIO 18
 #define ECHO_GPIO 19
-#endif
+//#endif
 
 void ultrasonic_test(dogFeederData_t *pDogFeederData)
 {
+    float sumEmptyPercentage;
+    int32_t sumDistance;
+    uint32_t distance;
+    float percentage;
 
     ultrasonic_sensor_t sensor = {
         .trigger_pin = TRIGGER_GPIO,
@@ -176,29 +181,40 @@ void ultrasonic_test(dogFeederData_t *pDogFeederData)
 
     ultrasonic_init(&sensor);
 
-    uint32_t distance;
     while (true) {
         if(pDogFeederData->readUltrasonic) {
-            esp_err_t res = ultrasonic_measure_mm(&sensor, MAX_DISTANCE_CM, &distance);
-            if (res != ESP_OK) {
-                printf("Error %d: ", res);
-                switch (res) {
-                    case ESP_ERR_ULTRASONIC_PING:
-                        printf("Cannot ping (device is in invalid state)\n");
-                        break;
-                    case ESP_ERR_ULTRASONIC_PING_TIMEOUT:
-                        printf("Ping timeout (no device found)\n");
-                        break;
-                    case ESP_ERR_ULTRASONIC_ECHO_TIMEOUT:
-                        printf("Echo timeout (i.e. distance too big)\n");
-                        break;
-                    default:
-                        printf("%s\n", esp_err_to_name(res));
+            sumDistance = 0;
+            sumEmptyPercentage = 0;
+            for(int i = 0; i < 3; i++) {
+                esp_err_t res = ultrasonic_measure_mm(&sensor, MAX_DISTANCE_CM, &distance);
+                if (res != ESP_OK) {
+                    printf("Error %d: ", res);
+                    switch (res) {
+                        case ESP_ERR_ULTRASONIC_PING:
+                            printf("Cannot ping (device is in invalid state)\n");
+                            break;
+                        case ESP_ERR_ULTRASONIC_PING_TIMEOUT:
+                            printf("Ping timeout (no device found)\n");
+                            break;
+                        case ESP_ERR_ULTRASONIC_ECHO_TIMEOUT:
+                            printf("Echo timeout (i.e. distance too big)\n");
+                            break;
+                        default:
+                            printf("%s\n", esp_err_to_name(res));
+                    }
+                }
+                else {
+                    vTaskDelay(50 / portTICK_PERIOD_MS);
+                    percentage = (((int32_t)distance - 45)*100) / 194;
+                    if(percentage > 100) {
+                        percentage = 100;
+                    } else if(percentage < 0) percentage = 0;
+                    sumEmptyPercentage += percentage;
+                    sumDistance += distance;
                 }
             }
-            else {
-                pDogFeederData->distanceMM = distance;
-            }
+            pDogFeederData->distanceMM = sumDistance / 3;
+            pDogFeederData->percentageFull = 100 - (sumEmptyPercentage / 3);
             pDogFeederData->readUltrasonic = 0;
         }
         

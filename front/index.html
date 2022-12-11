@@ -5,6 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DogFeeder</title>
+<<<<<<< HEAD
     <style>
         body{
             display: flex;
@@ -32,14 +33,116 @@
     <script src="./request.js"></script>
 </head>
 <body>
+=======
+    <link rel="stylesheet" href="./style.css" />
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.0.1/chart.min.js"></script>
+    <script>
+
+      var ctx = document.getElementsByClassName("grafico");
+
+      var chartgraf = new chart(ctx,{
+        type:'line', 
+
+
+
+      }); -->
+
+    <script>
+      function renderTable(data) {
+        const ctx = document.getElementById("myChart");
+
+        new Chart(ctx, {
+          type: "line",
+          data: {
+            labels: data.map(({date}) => new Date(date).toLocaleString()),
+            datasets: [
+              {
+                label: "Ração do seu canino (%)",
+                data: data.map(({food_height_cm}) => food_height_cm),
+                borderWidth: 1,
+              },
+            ],
+          },
+          options: {
+            scales: {
+              y: {
+                beginAtZero: true,
+              },
+            },
+          },
+        });
+      }
+
+      function postData(host) {
+        const Http = new XMLHttpRequest();
+        const url = `${host}/dogfeeder`;
+        Http.open("POST", url);
+        Http.send(
+          JSON.stringify({
+            date: new Date().toISOString(),
+            total_weight_mg: 1500,
+            food_height_cm: 29,
+          })
+        );
+        let executedFunction = false;
+        Http.onreadystatechange = (e) => {
+          if (!executedFunction && Http.responseText) {
+            executedFunction = true;
+            console.log(Http.responseText);
+          }
+        };
+      }
+      postData("http://192.168.0.9:8080");
+
+      function getData(host) {
+        const Http = new XMLHttpRequest();
+        const url = `${host}/dogfeeder`;
+        Http.open("GET", url);
+        Http.send();
+        let executedFunction = false;
+        Http.onreadystatechange = (e) => {
+          if (!executedFunction && Http.responseText) {
+            executedFunction = true;
+            data = JSON.parse(Http.responseText).map((a) => JSON.parse(a));
+            console.log(data);
+            renderTable(data);
+          }
+        };
+      }
+      getData("http://192.168.0.9:8080");
+    </script>
+  </head>
+  <body>
+    
+
+   
+
+>>>>>>> main
     <header>
         <h1>Dog Feeder</h1>
     </header>
     <main>
+<<<<<<< HEAD
         <div>We care about your pet when you aren't at home</div>
+=======
+      <div>We care about your pet when you aren't at home</div>
+      <div>
+        <canvas id="myChart"></canvas>
+      </div>
+>>>>>>> main
     </main>
+    
     <footer>
+<<<<<<< HEAD
         Contibutors: Lucas Ennes, Rodrigo Schardong, Henrique Andrade, Matheus Araújo, Gabriel Camargo, Gabriel Vieira
     </footer>
 </body>
 </html>
+=======
+      Contibutors: Lucas Ennes, Rodrigo Schardong, Henrique Andrade, Matheus
+      Araújo, Gabriel Camargo, Gabriel Vieira, Glauce Cassiano
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </body>
+</html>
+>>>>>>> main

@@ -107,8 +107,9 @@ esp_err_t ultrasonic_measure(const ultrasonic_sensor_t *dev, float max_distance,
  *         - ::ESP_ERR_ULTRASONIC_ECHO_TIMEOUT - Distance is too big or wave is scattered
  */
 typedef struct{
+    float percentageFull;
     uint8_t readUltrasonic;
-    uint32_t distanceMM;
+    float distanceMM;
 } dogFeederData_t;
 
 esp_err_t ultrasonic_measure_cm(const ultrasonic_sensor_t *dev, uint32_t max_distance, uint32_t *distance);

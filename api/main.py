@@ -6,8 +6,8 @@
 from flask import Flask, request, render_template, jsonify, redirect, url_for
 from flask_cors import CORS
 import socket
-import matplotlib.pyplot as plt
-import numpy as np
+# import matplotlib.pyplot as plt
+# import numpy as np
 import pandas as pd
 import openpyxl
 

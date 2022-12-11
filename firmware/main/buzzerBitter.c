@@ -1,6 +1,6 @@
 #include "buzzerBitter.h"
 
-#define buzzer 5
+#define buzzer 13
 #define GPIO_OUTPUT_SPEED LEDC_HIGH_SPEED_MODE
 
 ledc_timer_config_t timer_conf;
@@ -50,13 +50,11 @@ void soundOn (uint32_t t_Freq, uint32_t t_Duration)
 	ledc_channel_config(&ledc_conf);
 
 	// start
-	printf("Starting buzzer...\n");
     ledc_set_duty(GPIO_OUTPUT_SPEED, LEDC_CHANNEL_0, 0x7F); 
     ledc_update_duty(GPIO_OUTPUT_SPEED, LEDC_CHANNEL_0);
 	vTaskDelay(t_Duration/portTICK_PERIOD_MS);
 
 	// stop
-	printf("Stopping buzzer...\n");
     ledc_set_duty(GPIO_OUTPUT_SPEED, LEDC_CHANNEL_0, 0);
     ledc_update_duty(GPIO_OUTPUT_SPEED, LEDC_CHANNEL_0);
 }
@@ -65,12 +63,33 @@ void soundOn (uint32_t t_Freq, uint32_t t_Duration)
  * @brief Function used to play a determinated song
  * 
  */
-void playBeep (void)
+void playBeep (bool *t_flag)
 {
-	soundOn(3000, 100);
-	soundOn(2560, 50);
-	soundOn(800, 500);
-	vTaskDelay(pdMS_TO_TICKS(100));
-	soundOn(2500, 500);
-	vTaskDelay(pdMS_TO_TICKS(100));
+	configBuzzerGeneral();
+
+	while(1)
+	{
+		if(*t_flag)
+		{
+			printf("Playing sound...\n");
+
+			soundOn(3000, 100);
+			soundOn(2560, 50);
+			soundOn(800, 500);
+			vTaskDelay(pdMS_TO_TICKS(100));
+			soundOn(2500, 500);
+
+			*t_flag = pdFALSE;
+		}
+		vTaskDelay(pdMS_TO_TICKS(10));
+	}
+}
+
+/**
+ * @brief Function wich create a parallel task to the sound effect
+ * 
+ */
+void soundHandler (bool *t_play)
+{
+	xTaskCreate(playBeep, "playBeep", configMINIMAL_STACK_SIZE * 3, t_play, 6, NULL);
 }
