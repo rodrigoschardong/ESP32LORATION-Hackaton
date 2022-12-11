@@ -21,10 +21,10 @@
 #define PIN3 25
 #define PIN4 33
 
-uint8_t flag;
 
 void app_main(void)
 {   
+    dogFeederData_t dogFeederData;
     // configStepperMotor: setup the pins as output and save them for future use
     configStepperMotor(PIN1, PIN2, PIN3, PIN4);
 
@@ -37,8 +37,14 @@ void app_main(void)
     // stepClockWise: steps motor for the given number of steps in clockwise direction
     stepClockwise(500);
 
-    ultrasonicHandler(&flag);
+    ultrasonicHandler(&dogFeederData);
 
-    printf("%d", flag);
+    while(true) {
+        printf("Distance: %d mm\n", dogFeederData.distanceMM);
+        printf("Is running %d\n==============\n", dogFeederData.readUltrasonic);
+        
+        vTaskDelay(500 / portTICK_PERIOD_MS);
+        dogFeederData.readUltrasonic = 1;
+    }
 }
 

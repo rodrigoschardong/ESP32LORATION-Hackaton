@@ -166,11 +166,8 @@ esp_err_t ultrasonic_measure_mm(const ultrasonic_sensor_t *dev, uint32_t max_dis
 #define ECHO_GPIO 19
 #endif
 
-uint8_t *pisRunning = 0;
-
-void ultrasonic_test(void *pvParameters)
+void ultrasonic_test(dogFeederData_t *pDogFeederData)
 {
-    *pisRunning = 1;
 
     ultrasonic_sensor_t sensor = {
         .trigger_pin = TRIGGER_GPIO,
@@ -180,37 +177,38 @@ void ultrasonic_test(void *pvParameters)
     ultrasonic_init(&sensor);
 
     uint32_t distance;
-    esp_err_t res = ultrasonic_measure_mm(&sensor, MAX_DISTANCE_CM, &distance);
-    if (res != ESP_OK)
-    {
-        printf("Error %d: ", res);
-        switch (res)
-        {
-            case ESP_ERR_ULTRASONIC_PING:
-                printf("Cannot ping (device is in invalid state)\n");
-                break;
-            case ESP_ERR_ULTRASONIC_PING_TIMEOUT:
-                printf("Ping timeout (no device found)\n");
-                break;
-            case ESP_ERR_ULTRASONIC_ECHO_TIMEOUT:
-                printf("Echo timeout (i.e. distance too big)\n");
-                break;
-            default:
-                printf("%s\n", esp_err_to_name(res));
+    while (true) {
+        if(pDogFeederData->readUltrasonic) {
+            esp_err_t res = ultrasonic_measure_mm(&sensor, MAX_DISTANCE_CM, &distance);
+            if (res != ESP_OK) {
+                printf("Error %d: ", res);
+                switch (res) {
+                    case ESP_ERR_ULTRASONIC_PING:
+                        printf("Cannot ping (device is in invalid state)\n");
+                        break;
+                    case ESP_ERR_ULTRASONIC_PING_TIMEOUT:
+                        printf("Ping timeout (no device found)\n");
+                        break;
+                    case ESP_ERR_ULTRASONIC_ECHO_TIMEOUT:
+                        printf("Echo timeout (i.e. distance too big)\n");
+                        break;
+                    default:
+                        printf("%s\n", esp_err_to_name(res));
+                }
+            }
+            else {
+                pDogFeederData->distanceMM = distance;
+            }
+            pDogFeederData->readUltrasonic = 0;
         }
+        
+        vTaskDelay(500 / portTICK_PERIOD_MS);
     }
-    else {
-        printf("Distance: %d mm\n", distance);
-        printf("%d", *pisRunning);
-    }
-
-    vTaskDelay(pdMS_TO_TICKS(500));
-
-    *pisRunning = 0;
+    
+    
 }
 
-void ultrasonicHandler(uint8_t *isRunning)
+void ultrasonicHandler(dogFeederData_t *dogFeederData)
 {
-    *isRunning = *pisRunning;
-    xTaskCreate(ultrasonic_test, "ultrasonic_test", configMINIMAL_STACK_SIZE * 3, NULL , 5, NULL);
+    xTaskCreate(ultrasonic_test, "ultrasonic_test", configMINIMAL_STACK_SIZE * 3, dogFeederData , 5, NULL);
 }
