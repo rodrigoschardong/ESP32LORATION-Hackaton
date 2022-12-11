@@ -19,6 +19,7 @@
 void configBuzzerGeneral (void);
 void changeFreq (uint32_t t_NewFreq);
 void soundOn (uint32_t t_Freq,uint32_t t_Duration);
-void playBeep (void);
+void playBeep (bool *t_flag);
+void soundHandler (bool *t_play);
 
 #endif

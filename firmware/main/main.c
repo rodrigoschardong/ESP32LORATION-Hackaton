@@ -49,6 +49,8 @@ const uint32_t steperOperationTimeSeconds = 15;
 
 static const char *TAG = "Main";
 
+bool fplaysong = pdTRUE;
+
 void app_main(void)
 {   
     dogFeederData_t dogFeederData;
@@ -56,6 +58,7 @@ void app_main(void)
     //double weight;
     // configStepperMotor: setup the pins as output and save them for future use
     configStepperMotor(PIN1, PIN2, PIN3, PIN4);
+    soundHandler(&fplaysong);
     ultrasonicHandler(&dogFeederData);
 
     //initADC();
@@ -74,6 +77,7 @@ void app_main(void)
             stepCounterclockwise(steperOperationTimeSeconds);
             ESP_LOGI(TAG, "Enjoy :)");
             //Trigger Ultrassonic
+            fplaysong = 1;
             dogFeederData.readUltrasonic = 1;
         }
         vTaskDelay(10 / portTICK_PERIOD_MS);
@@ -82,12 +86,23 @@ void app_main(void)
     // stepClockWise: steps motor for the given number of steps in clockwise direction
     stepClockwise(500);
 
-    while(true) {
+    /*while(true) {
         printf("Distance: %d mm\n", dogFeederData.distanceMM);
         printf("Is running %d\n==============\n", dogFeederData.readUltrasonic);
         
         vTaskDelay(500 / portTICK_PERIOD_MS);
-        
-    }
+        dogFeederData.readUltrasonic = 1;
+
+    }*/
+
+    // while (1) 
+    // {
+    //     weight = readWeight(128);
+    //     if (shouldLog) {
+    //         ESP_LOGI(TAG, "ADC1_CHANNEL_6: %f kg", weight);
+    //     }
+
+    //     vTaskDelay(pdMS_TO_TICKS(100));
+    // }
 }
 
