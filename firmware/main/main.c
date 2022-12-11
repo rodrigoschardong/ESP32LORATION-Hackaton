@@ -56,6 +56,7 @@ void app_main(void)
     //double weight;
     // configStepperMotor: setup the pins as output and save them for future use
     configStepperMotor(PIN1, PIN2, PIN3, PIN4);
+    ultrasonicHandler(&dogFeederData);
 
     //initADC();
     
@@ -69,35 +70,24 @@ void app_main(void)
         if(timerCounter){
             ESP_LOGI(TAG, "Food Time");
             timerCounter = 0;
+            configBuzzerGeneral();
             stepCounterclockwise(steperOperationTimeSeconds);
             ESP_LOGI(TAG, "Enjoy :)");
             //Trigger Ultrassonic
+            dogFeederData.readUltrasonic = 1;
         }
         vTaskDelay(10 / portTICK_PERIOD_MS);
     }
-    ultrasonicHandler(&dogFeederData);  
+    
     // stepClockWise: steps motor for the given number of steps in clockwise direction
     stepClockwise(500);
-    configBuzzerGeneral();
-
-    
 
     while(true) {
         printf("Distance: %d mm\n", dogFeederData.distanceMM);
         printf("Is running %d\n==============\n", dogFeederData.readUltrasonic);
         
         vTaskDelay(500 / portTICK_PERIOD_MS);
-        dogFeederData.readUltrasonic = 1;
+        
     }
-
-    // while (1) 
-    // {
-    //     weight = readWeight(128);
-    //     if (shouldLog) {
-    //         ESP_LOGI(TAG, "ADC1_CHANNEL_6: %f kg", weight);
-    //     }
-
-    //     vTaskDelay(pdMS_TO_TICKS(100));
-    // }
 }
 
