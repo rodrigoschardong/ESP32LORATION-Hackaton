@@ -48,7 +48,7 @@ void app_main(void)
 {   
     dogFeederData_t dogFeederData;
     wifi_start();
-    double weight;
+    //double weight;
     // configStepperMotor: setup the pins as output and save them for future use
     configStepperMotor(PIN1, PIN2, PIN3, PIN4);
     initADC();
@@ -68,11 +68,9 @@ void app_main(void)
     ultrasonicHandler(&dogFeederData);
 
     while(true) {
-        printf("Distance: %d mm\n", dogFeederData.distanceMM);
-        printf("Is running %d\n==============\n", dogFeederData.readUltrasonic);
-        
-        vTaskDelay(500 / portTICK_PERIOD_MS);
         dogFeederData.readUltrasonic = 1;
+        printf("percentage: %.2f%% \n", dogFeederData.percentageFull);
+        vTaskDelay(500 / portTICK_PERIOD_MS);
     }
 
     // while (1) 
