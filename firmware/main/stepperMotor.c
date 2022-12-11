@@ -21,17 +21,14 @@ void configStepperMotor(int pin1, int pin2, int pin3, int pin4) {
     gpio_set_direction(stepPins[3],GPIO_MODE_OUTPUT);
 }
 
-void stepCounterclockwise(uint16_t timeInSec) {
-    uint8_t delayTime = 15;
-    uint16_t steps = timeInSec * (1000 / (delayTime * 4));
-
-    for(int j = 0; j < steps; j++) {
+void stepCounterclockwise(int steps) {
+    for(int j = 0; j < 400; j++) {
         for(int i = 0; i < 4; i++) {
             gpio_set_level(stepPins[0], i == 0);
             gpio_set_level(stepPins[1], i == 1);
             gpio_set_level(stepPins[2], i == 2);
             gpio_set_level(stepPins[3], i == 3);
-            vTaskDelay(delayTime / portTICK_PERIOD_MS); 
+            vTaskDelay(15 / portTICK_PERIOD_MS); 
         }
     }
 
@@ -41,17 +38,14 @@ void stepCounterclockwise(uint16_t timeInSec) {
     gpio_set_level(stepPins[3], 0);
 }
 
-void stepClockwise(uint16_t timeInSec) {
-    uint8_t delayTime = 15;
-    uint16_t steps = timeInSec * (1000 / (delayTime * 4));
-
-    for(int j = 0; j < steps; j++) {
+void stepClockwise(int steps) {
+    for(int j = 0; j < 400; j++) {
         for(int i = 0; i < 4; i++) {
             gpio_set_level(stepPins[0], i == 3);
             gpio_set_level(stepPins[1], i == 2);
             gpio_set_level(stepPins[2], i == 1);
             gpio_set_level(stepPins[3], i == 0);
-            vTaskDelay(delayTime / portTICK_PERIOD_MS); 
+            vTaskDelay(15 / portTICK_PERIOD_MS); 
         }
     }
 

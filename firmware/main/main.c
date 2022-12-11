@@ -1,5 +1,3 @@
-<<<<<<< Updated upstream
-=======
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -20,7 +18,6 @@
 #include "esp_err.h"
 #include "driver/gpio.h"
 #include "stepperMotor.h"
-#include "ultrasonic.h"
 
 #include "esp_log.h"
 
@@ -29,17 +26,15 @@
 #include "json_post.h"
 #include "buzzerBitter.h"
 
-//Step Motor Pins
 #define PIN1 27
 #define PIN2 26
 #define PIN3 25
 #define PIN4 33
 #define SCALE 34
 
-//static const char *TAG = "ADC";
-//static bool shouldLog = false;
+static const char *TAG = "ADC";
+static bool shouldLog = false;
 
-//WiFi
 #define EXAMPLE_ESP_WIFI_SSID      CONFIG_ESP_WIFI_SSID
 #define EXAMPLE_ESP_WIFI_PASS      CONFIG_ESP_WIFI_PASSWORD
 #define EXAMPLE_ESP_MAXIMUM_RETRY  CONFIG_ESP_MAXIMUM_RETRY
@@ -51,13 +46,10 @@ const uint32_t timerValueSeconds = 25;
 
 const uint32_t steperOperationTimeSeconds = 15;
 
-static const char *TAG = "Main";
-
 bool fplaysong = pdTRUE;
 
 void app_main(void)
 {   
-    dogFeederData_t dogFeederData;
     wifi_start();
     
     double weight;
