@@ -79,6 +79,8 @@ void app_main(void)
             //Trigger Ultrassonic
             fplaysong = 1;
             dogFeederData.readUltrasonic = 1;
+            printf("percentage: %.2f%% \n", dogFeederData.percentageFull);
+            vTaskDelay(500 / portTICK_PERIOD_MS);
         }
         vTaskDelay(10 / portTICK_PERIOD_MS);
     }
@@ -86,14 +88,6 @@ void app_main(void)
     // stepClockWise: steps motor for the given number of steps in clockwise direction
     stepClockwise(500);
 
-    /*while(true) {
-        printf("Distance: %d mm\n", dogFeederData.distanceMM);
-        printf("Is running %d\n==============\n", dogFeederData.readUltrasonic);
-        
-        vTaskDelay(500 / portTICK_PERIOD_MS);
-        dogFeederData.readUltrasonic = 1;
-
-    }*/
 
     // while (1) 
     // {
