@@ -1,6 +1,6 @@
 #include "buzzerBitter.h"
 
-#define buzzer 5
+#define buzzer 13
 #define GPIO_OUTPUT_SPEED LEDC_HIGH_SPEED_MODE
 
 ledc_timer_config_t timer_conf;
