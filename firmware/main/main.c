@@ -24,6 +24,7 @@
 
 #include "adc.h"
 #include "timer.h"
+#include "buzzerBitter.h"
 
 //Step Motor Pins
 #define PIN1 27
@@ -77,6 +78,7 @@ void app_main(void)
     ultrasonicHandler(&dogFeederData);  
     // stepClockWise: steps motor for the given number of steps in clockwise direction
     stepClockwise(500);
+    configBuzzerGeneral();
 
     
 
