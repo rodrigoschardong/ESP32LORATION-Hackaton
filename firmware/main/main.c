@@ -23,6 +23,7 @@
 
 #include "adc.h"
 #include "timer.h"
+#include "json_post.h"
 
 #define PIN1 27
 #define PIN2 26
@@ -43,9 +44,12 @@ static bool shouldLog = false;
 const uint32_t timerValueSeconds = 1800;
 
 
+
 void app_main(void)
 {   
     wifi_start();
+    post_handler();
+
     double weight;
     // configStepperMotor: setup the pins as output and save them for future use
     configStepperMotor(PIN1, PIN2, PIN3, PIN4);
@@ -72,5 +76,7 @@ void app_main(void)
 
         vTaskDelay(pdMS_TO_TICKS(100));
     }
-}
 
+        
+
+}
