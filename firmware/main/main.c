@@ -1,4 +1,6 @@
 #include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "freertos/event_groups.h"
@@ -16,7 +18,11 @@
 #include "esp_err.h"
 #include "driver/gpio.h"
 #include "stepperMotor.h"
+#include "ultrasonic.h"
 
+#include "esp_log.h"
+
+#include "adc.h"
 #include "timer.h"
 
 //Step Motor Pins
@@ -24,6 +30,10 @@
 #define PIN2 26
 #define PIN3 25
 #define PIN4 33
+#define SCALE 34
+
+//static const char *TAG = "ADC";
+//static bool shouldLog = false;
 
 //WiFi
 #define EXAMPLE_ESP_WIFI_SSID      CONFIG_ESP_WIFI_SSID
@@ -40,10 +50,14 @@ static const char *TAG = "Main";
 
 void app_main(void)
 {   
+    dogFeederData_t dogFeederData;
     wifi_start();
+    //double weight;
     // configStepperMotor: setup the pins as output and save them for future use
     configStepperMotor(PIN1, PIN2, PIN3, PIN4);
 
+    //initADC();
+    
     uint8_t timerCounter = 1;
     //Init Timer
     tg0_timer0_init(timerValueSeconds, &timerCounter);
@@ -60,5 +74,28 @@ void app_main(void)
         }
         vTaskDelay(10 / portTICK_PERIOD_MS);
     }
+    ultrasonicHandler(&dogFeederData);  
+    // stepClockWise: steps motor for the given number of steps in clockwise direction
+    stepClockwise(500);
+
+    
+
+    while(true) {
+        printf("Distance: %d mm\n", dogFeederData.distanceMM);
+        printf("Is running %d\n==============\n", dogFeederData.readUltrasonic);
+        
+        vTaskDelay(500 / portTICK_PERIOD_MS);
+        dogFeederData.readUltrasonic = 1;
+    }
+
+    // while (1) 
+    // {
+    //     weight = readWeight(128);
+    //     if (shouldLog) {
+    //         ESP_LOGI(TAG, "ADC1_CHANNEL_6: %f kg", weight);
+    //     }
+
+    //     vTaskDelay(pdMS_TO_TICKS(100));
+    // }
 }
 
