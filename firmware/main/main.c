@@ -48,6 +48,7 @@ const uint32_t timerValueSeconds = 1800;
 void app_main(void)
 {   
     wifi_start();
+    
     post_handler();
 
     double weight;
