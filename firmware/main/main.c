@@ -18,6 +18,7 @@
 #include "esp_err.h"
 #include "driver/gpio.h"
 #include "stepperMotor.h"
+#include "ultrasonic.h"
 
 #include "esp_log.h"
 
@@ -45,6 +46,7 @@ const uint32_t timerValueSeconds = 1800;
 
 void app_main(void)
 {   
+    dogFeederData_t dogFeederData;
     wifi_start();
     double weight;
     // configStepperMotor: setup the pins as output and save them for future use
@@ -63,14 +65,24 @@ void app_main(void)
     // stepClockWise: steps motor for the given number of steps in clockwise direction
     stepClockwise(500);
 
-    while (1) 
-    {
-        weight = readWeight(128);
-        if (shouldLog) {
-            ESP_LOGI(TAG, "ADC1_CHANNEL_6: %f kg", weight);
-        }
+    ultrasonicHandler(&dogFeederData);
 
-        vTaskDelay(pdMS_TO_TICKS(100));
+    while(true) {
+        printf("Distance: %d mm\n", dogFeederData.distanceMM);
+        printf("Is running %d\n==============\n", dogFeederData.readUltrasonic);
+        
+        vTaskDelay(500 / portTICK_PERIOD_MS);
+        dogFeederData.readUltrasonic = 1;
     }
+
+    // while (1) 
+    // {
+    //     weight = readWeight(128);
+    //     if (shouldLog) {
+    //         ESP_LOGI(TAG, "ADC1_CHANNEL_6: %f kg", weight);
+    //     }
+
+    //     vTaskDelay(pdMS_TO_TICKS(100));
+    // }
 }
 
