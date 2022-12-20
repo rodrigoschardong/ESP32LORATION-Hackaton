@@ -102,7 +102,7 @@ esp_err_t _http_event_handler(esp_http_client_event_t *evt)
 
 
 
-esp_err_t post_handler()
+esp_err_t post_handler(int receivePercentage)
 {
     
     static const char *TAG = "HTTP_CLIENT Handler";
@@ -120,8 +120,11 @@ esp_err_t post_handler()
     };
     esp_http_client_handle_t client = esp_http_client_init(&config);
 
+
     // POST
-    const char *post_data = "{\"pilottomepassaemfisica2humilde\": \"value1\"}";
+    char *post_data = "{\" \"}";
+    post_data = strcat(post_data,itoa(receivePercentage));
+
     esp_http_client_set_url(client, "http://192.168.0.10:8080/dogfeeder");
     esp_http_client_set_method(client, HTTP_METHOD_POST);
     esp_http_client_set_header(client, "Content-Type", "application/json");

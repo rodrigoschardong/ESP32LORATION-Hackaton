@@ -75,6 +75,7 @@ void app_main(void)
             fplaysong = 1;
             dogFeederData.readUltrasonic = 1;
             printf("percentage: %.2f%% \n", dogFeederData.percentageFull);
+            post_handler(dogFeederData.percentageFull);
             vTaskDelay(500 / portTICK_PERIOD_MS);
         }
         vTaskDelay(10 / portTICK_PERIOD_MS);
